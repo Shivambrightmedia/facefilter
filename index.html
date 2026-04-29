@@ -41,7 +41,6 @@
 
     <!-- Face Anchor 0 -->
     <xrextras-faceanchor face-id="0" face-mouth-handler="faceId: 0">
-      <xrextras-face-mesh material="color: #FF3B30; transparent: true; opacity: 0.3"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -61,7 +60,6 @@
 
     <!-- Face Anchor 1 -->
     <xrextras-faceanchor face-id="1" face-mouth-handler="faceId: 1">
-      <xrextras-face-mesh material="color: #FF3B30; transparent: true; opacity: 0.3"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -81,7 +79,6 @@
 
     <!-- Face Anchor 2 -->
     <xrextras-faceanchor face-id="2" face-mouth-handler="faceId: 2">
-      <xrextras-face-mesh material="color: #FF3B30; transparent: true; opacity: 0.3"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -133,18 +130,12 @@
         const isOpen = (face.mouthOpenness || face.mouthOpen || 0) > 0.1
         const mouthBall = this.el.querySelector('.mouth-ball')
         const eyeBalls = this.el.querySelectorAll('.eye-ball')
-        const mesh = this.el.querySelector('xrextras-face-mesh')
 
         if (mouthBall) mouthBall.setAttribute('visible', isOpen)
         eyeBalls.forEach(ball => {
           ball.setAttribute('visible', isOpen)
           ball.setAttribute('scale', isOpen ? '1.5 1.5 1.5' : '1 1 1')
         })
-        if (mesh) {
-          mesh.setAttribute('material', isOpen ?
-            'color: #34C759; transparent: true; opacity: 0.6' :
-            'color: #FF3B30; transparent: true; opacity: 0.3')
-        }
       }
     })
 
