@@ -149,6 +149,15 @@
     })
 
     const activeFaces = new Set()
+    const pauseSong = () => {
+      const song = document.getElementById('song')
+      if (song && playPromise) {
+        playPromise.then(() => song.pause()).catch(() => {})
+      } else if (song) {
+        song.pause()
+      }
+    }
+
     scene.addEventListener('xrfacefound', (e) => {
       activeFaces.add(e.detail.id)
       log(`Faces: ${activeFaces.size} | Found: ${e.detail.id}`)
@@ -156,6 +165,11 @@
     scene.addEventListener('xrfacelost', (e) => {
       activeFaces.delete(e.detail.id)
       log(`Faces: ${activeFaces.size} | Lost: ${e.detail.id}`)
+      // No faces left → stop music
+      if (activeFaces.size === 0) {
+        openCount = 0
+        pauseSong()
+      }
     })
 
     let openCount = 0
@@ -165,7 +179,8 @@
       openCount++
       log(`Users: ${activeFaces.size} | Mouths: ${openCount}`)
       const song = document.getElementById('song')
-      if (song && openCount === 1) {
+      // Only play if face is actively detected
+      if (song && openCount === 1 && activeFaces.size > 0) {
         playPromise = song.play()
         playPromise.catch(e => {
           if (e.name !== 'AbortError') log('Audio Error: ' + e.message)
@@ -176,10 +191,7 @@
     scene.addEventListener('xrmouthclosed', () => {
       openCount = Math.max(0, openCount - 1)
       log(`Users: ${activeFaces.size} | Mouths: ${openCount}`)
-      const song = document.getElementById('song')
-      if (song && openCount === 0 && playPromise) {
-        playPromise.then(() => song.pause()).catch(() => { })
-      }
+      if (openCount === 0) pauseSong()
     })
 
     // Unlock audio on first interaction
