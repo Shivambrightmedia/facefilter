@@ -21,6 +21,11 @@
         configurable: true
       });
     })();
+
+    // Set resource path for local engine
+    window.addEventListener('xrloaded', () => {
+      XR8.setResourcePath('xr-engine/resources/')
+    })
   </script>
 
   <!-- 8th Wall Engine -->
@@ -37,7 +42,6 @@
 
 <body>
   <a-scene 
-    xrextras-loading
     xrextras-runtime-error 
     renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
     xrface="apiKey: local-test; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
@@ -95,6 +99,10 @@
     window.addEventListener('cameraerror', (event) => {
       console.error('❌ Camera Error:', event.detail)
       alert('Camera Error: ' + JSON.stringify(event.detail))
+    })
+
+    scene.addEventListener('camerastart', (event) => {
+      console.log('✅ Camera Started:', event.detail)
     })
 
     scene.addEventListener('realityerror', (event) => {
