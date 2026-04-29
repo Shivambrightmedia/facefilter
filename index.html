@@ -65,7 +65,7 @@
   </div>
 
   <a-scene xrextras-runtime-error renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
-    xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
+    xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; allowedDevices: any;">
 
     <a-assets timeout="30000">
       <!-- No external textures for now to avoid 404 -->
@@ -148,6 +148,11 @@
       window.location.reload()
     })
 
+    // Global Error Handler
+    window.addEventListener('error', (e) => {
+      log('Global Error: ' + e.message)
+    })
+
     // Wait for 8th wall to start (and have permissions) before listing labels
     window.addEventListener('xrloaded', () => {
       log('8th Wall Loaded (xrloaded)')
@@ -162,9 +167,17 @@
           config.deviceId = preferredId
           log('Using deviceId: ' + preferredId.substring(0, 8) + '...')
         }
+        
+        // Remove cameraDirection for PC/Standalone to avoid "front" constraint
+        if (config.cameraDirection) {
+          log('Removing cameraDirection constraint: ' + config.cameraDirection)
+          delete config.cameraDirection
+        }
+
         // Force desktop support if needed
         if (!config.allowedDevices) config.allowedDevices = 'any'
         
+        log('Final Config: ' + JSON.stringify(config))
         return originalRun.apply(this, arguments)
       }
     })
