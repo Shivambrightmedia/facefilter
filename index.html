@@ -9,15 +9,25 @@
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
 
-  <!-- 8th Wall Engine (Local Open Source Binary) -->
-  <script src="xr-engine/xr.js" data-preload-chunks="face"></script>
-
-  <!-- Immediate Shim and Explicit Load -->
+  <!-- Aggressive XR8 Shim -->
   <script>
-    window.addEventListener('xrloaded', () => {
-      if (window.XR && !window.XR8) window.XR8 = window.XR;
-    });
+    (function() {
+      var _xr;
+      Object.defineProperty(window, 'XR8', {
+        get: function() { return _xr || window.XR; },
+        set: function(v) { _xr = v; if (!window.XR) window.XR = v; },
+        configurable: true
+      });
+      Object.defineProperty(window, 'XR', {
+        get: function() { return _xr; },
+        set: function(v) { _xr = v; if (!window.XR8) window.XR8 = v; },
+        configurable: true
+      });
+    })();
   </script>
+
+  <!-- 8th Wall Engine -->
+  <script src="xr-engine/xr.js" data-preload-chunks="face"></script>
 
   <!-- 8th Wall XRExtras -->
   <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1.0.0/dist/xrextras.js"></script>
@@ -26,7 +36,10 @@
 </head>
 
 <body>
-  <a-scene xrextras-runtime-error renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
+  <a-scene 
+    xrextras-loading
+    xrextras-runtime-error 
+    renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
     xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
