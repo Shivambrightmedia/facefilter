@@ -39,7 +39,7 @@
   <a-scene 
     xrextras-loading
     xrextras-runtime-error 
-    xrface="apiKey: local-test; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
+    xrface="apiKey: local-test; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: user; allowedDevices: any;">
 
     <a-assets timeout="30000">
       <!-- No external textures for now to avoid 404 -->
@@ -99,17 +99,6 @@
     scene.addEventListener('camerastart', (event) => {
       console.log('✅ Camera Started:', event.detail)
     })
-
-    // Browser Camera Test
-    navigator.mediaDevices.getUserMedia({video: true})
-      .then((stream) => {
-        console.log('✅ Browser Camera Access: SUCCESS')
-        stream.getTracks().forEach(track => track.stop()) // Stop test
-      })
-      .catch((err) => {
-        console.error('❌ Browser Camera Access: FAIL', err)
-        alert('Browser Camera Access Failed: ' + err.message)
-      })
 
     scene.addEventListener('realityerror', (event) => {
       console.error('❌ Reality Error:', event.detail)
