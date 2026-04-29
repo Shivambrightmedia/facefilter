@@ -16,6 +16,9 @@
   <script>
     window.addEventListener('xrloaded', () => {
       if (window.XR && !window.XR8) window.XR8 = window.XR;
+      if (window.XR8) {
+        XR8.FaceController.configure({maxFaces: 3})
+      }
     });
   </script>
 
