@@ -16,8 +16,8 @@
   <script>
     window.addEventListener('xrloaded', () => {
       if (window.XR && !window.XR8) window.XR8 = window.XR;
-      if (window.XR8) {
-        XR8.FaceController.configure({maxFaces: 3})
+      if (window.XR8 && window.XR8.FaceController) {
+        XR8.FaceController.configure({maxDetections: 3})
       }
     });
   </script>
@@ -30,7 +30,7 @@
 
 <body>
   <a-scene xrextras-runtime-error xrextras-face-tracking renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
-    xrface="maxFaces: 3; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
+    xrface="maxDetections: 3; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
       <!-- Local song -->
@@ -40,7 +40,7 @@
     <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
 
     <!-- Face Anchor 0 -->
-    <a-entity xrextras-faceanchor="face-id: 0" face-mouth-handler="faceId: 0">
+    <xrextras-faceanchor face-id="0" face-mouth-handler="faceId: 0">
       <xrextras-face-mesh material="color: #FF3B30; transparent: true; opacity: 0.3"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
@@ -57,10 +57,10 @@
       <xrextras-face-attachment point="rightEye">
         <a-sphere class="eye-ball" radius="0.05" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
       </xrextras-face-attachment>
-    </a-entity>
+    </xrextras-faceanchor>
 
     <!-- Face Anchor 1 -->
-    <a-entity xrextras-faceanchor="face-id: 1" face-mouth-handler="faceId: 1">
+    <xrextras-faceanchor face-id="1" face-mouth-handler="faceId: 1">
       <xrextras-face-mesh material="color: #FF3B30; transparent: true; opacity: 0.3"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
@@ -77,10 +77,10 @@
       <xrextras-face-attachment point="rightEye">
         <a-sphere class="eye-ball" radius="0.05" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
       </xrextras-face-attachment>
-    </a-entity>
+    </xrextras-faceanchor>
 
     <!-- Face Anchor 2 -->
-    <a-entity xrextras-faceanchor="face-id: 2" face-mouth-handler="faceId: 2">
+    <xrextras-faceanchor face-id="2" face-mouth-handler="faceId: 2">
       <xrextras-face-mesh material="color: #FF3B30; transparent: true; opacity: 0.3"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
@@ -97,7 +97,7 @@
       <xrextras-face-attachment point="rightEye">
         <a-sphere class="eye-ball" radius="0.05" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
       </xrextras-face-attachment>
-    </a-entity>
+    </xrextras-faceanchor>
 
     <a-light type="ambient" intensity="1"></a-light>
     <a-light type="directional" position="0 2 2" intensity="0.5"></a-light>
