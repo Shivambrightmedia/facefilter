@@ -19,6 +19,20 @@
       if (window.XR8 && window.XR8.FaceController) {
         XR8.FaceController.configure({maxDetections: 3})
       }
+      // Unlock audio after XR loads (camera permission = user gesture)
+      const tryUnlock = () => {
+        const song = document.getElementById('song')
+        if (song && song.paused) {
+          song.play().then(() => {
+            song.pause()
+            console.log('Audio unlocked via XR')
+          }).catch(() => {})
+        }
+      }
+      // Try on XR start events
+      window.addEventListener('xrpermissiongranted', tryUnlock, {once: true})
+      window.addEventListener('xrmountedxr', tryUnlock, {once: true})
+      setTimeout(tryUnlock, 3000) // fallback
     });
   </script>
 
@@ -185,20 +199,13 @@
       if (openCount === 0) pauseSong()
     })
 
-    // Unlock audio on first interaction
-    const unlockAudio = () => {
+    // Also unlock on first touchstart as final fallback
+    window.addEventListener('touchstart', () => {
       const song = document.getElementById('song')
-      if (song) {
-        song.play().then(() => {
-          song.pause()
-          log('Audio Unlocked!')
-        }).catch(e => log('Unlock Error: ' + e.message))
+      if (song && song.paused) {
+        song.play().then(() => song.pause()).catch(() => {})
       }
-      window.removeEventListener('click', unlockAudio)
-      window.removeEventListener('touchstart', unlockAudio)
-    }
-    window.addEventListener('click', unlockAudio)
-    window.addEventListener('touchstart', unlockAudio)
+    }, {once: true})
   </script>
 </body>
 
