@@ -73,6 +73,20 @@
 
     scene.addEventListener('xrfaceupdated', onFaceUpdate)
     window.addEventListener('xrfaceupdated', onFaceUpdate)
+
+    // Debugging camera and engine
+    window.addEventListener('xrloaded', () => {
+      console.log('✅ XR Engine Loaded')
+    })
+
+    window.addEventListener('cameraerror', (event) => {
+      console.error('❌ Camera Error:', event.detail)
+      alert('Camera Error: ' + JSON.stringify(event.detail))
+    })
+
+    scene.addEventListener('realityerror', (event) => {
+      console.error('❌ Reality Error:', event.detail)
+    })
   </script>
 </body>
 
