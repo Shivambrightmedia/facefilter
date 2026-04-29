@@ -55,10 +55,10 @@
 
       <!-- Eye Attachments -->
       <xrextras-face-attachment point="leftEye">
-        <a-sphere class="eye-ball" radius="0.03" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
+        <a-sphere class="eye-ball" radius="0.05" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
       </xrextras-face-attachment>
       <xrextras-face-attachment point="rightEye">
-        <a-sphere class="eye-ball" radius="0.03" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
+        <a-sphere class="eye-ball" radius="0.05" color="#FF3B30" visible="false" position="0 0 0.05"></a-sphere>
       </xrextras-face-attachment>
     </xrextras-faceanchor>
 
@@ -83,21 +83,32 @@
         const eyeBalls = document.querySelectorAll('.eye-ball')
         const {face} = event.detail
         
-        // Robust mouth openness detection
         const openness = face.mouthOpenness || face.mouthOpen || 0
         const isOpen = openness > 0.1
         
         log(`Mouth: ${openness.toFixed(2)} | Open: ${isOpen}`)
 
         if (mouthBall) mouthBall.setAttribute('visible', isOpen)
-        eyeBalls.forEach(ball => ball.setAttribute('visible', isOpen))
+        eyeBalls.forEach(ball => {
+          ball.setAttribute('visible', isOpen)
+          if (isOpen) ball.setAttribute('scale', '1.5 1.5 1.5')
+          else ball.setAttribute('scale', '1 1 1')
+        })
       }
 
       scene.addEventListener('xrfaceupdated', onFaceUpdate)
       
-      // Also try high-level mouth events
-      scene.addEventListener('xrmouthopened', () => log('Mouth Opened Event!'))
-      scene.addEventListener('xrmouthclosed', () => log('Mouth Closed Event!'))
+      scene.addEventListener('xrmouthopened', () => {
+        log('Mouth Opened!')
+        const mesh = document.querySelector('xrextras-face-mesh')
+        if (mesh) mesh.setAttribute('material', 'color: #34C759; transparent: true; opacity: 0.6')
+      })
+
+      scene.addEventListener('xrmouthclosed', () => {
+        log('Mouth Closed')
+        const mesh = document.querySelector('xrextras-face-mesh')
+        if (mesh) mesh.setAttribute('material', 'color: #FF3B30; transparent: true; opacity: 0.3')
+      })
     </script>
 </body>
 
