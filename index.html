@@ -37,14 +37,16 @@
 
 <body>
   <!-- On-screen Debug Log -->
-  <div id="debug-log" style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.8); color: #0f0; font-family: monospace; font-size: 10px; z-index: 10000; width: 100%; max-height: 150px; overflow-y: auto; padding: 5px;">
-    <button onclick="switchCamera()" style="background: #0f0; color: #000; border: none; padding: 5px; margin-bottom: 5px; cursor: pointer; font-weight: bold;">🔄 SWITCH CAMERA</button><br>
+  <div id="debug-log" style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.8); color: #0f0; font-family: monospace; font-size: 10px; z-index: 10000; width: 100%; max-height: 200px; overflow-y: auto; padding: 5px;">
+    <button onclick="switchCamera()" style="background: #0f0; color: #000; border: none; padding: 5px; margin-right: 5px; cursor: pointer; font-weight: bold;">🔄 SWITCH</button>
+    <button onclick="XR8.run()" style="background: #fff; color: #000; border: none; padding: 5px; cursor: pointer; font-weight: bold;">🚀 FORCE START</button><br>
   </div>
 
   <a-scene 
+    xrextras-loading
     xrextras-runtime-error 
     renderer="antialias: true; alpha: true;"
-    xrface="apiKey: local-test; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: user; allowedDevices: any;">
+    xrface="apiKey: local-test; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
     </a-assets>
