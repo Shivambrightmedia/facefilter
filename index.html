@@ -23,49 +23,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1.0.0/dist/xrextras.js"></script>
 
   <link rel="stylesheet" href="style.css">
-  <style>
-    #camera-selector-container {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10000;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 10px;
-      border-radius: 8px;
-      color: white;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    #camera-select {
-      background: #333;
-      color: white;
-      border: 1px solid #555;
-      padding: 5px;
-      border-radius: 4px;
-      outline: none;
-    #status-log {
-      margin-top: 10px;
-      font-size: 10px;
-      color: #aaa;
-      max-height: 100px;
-      overflow-y: auto;
-    }
-  </style>
 </head>
 
 <body>
-  <div id="camera-selector-container">
-    <label for="camera-select">Select Camera:</label>
-    <select id="camera-select">
-      <option>Requesting devices...</option>
-    </select>
-    <div id="status-log">Status: Initializing...</div>
-  </div>
-
   <a-scene xrextras-runtime-error renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
-    xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; allowedDevices: any;">
+    xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
       <!-- No external textures for now to avoid 404 -->
@@ -90,6 +52,14 @@
           <a-text value="OPEN!" align="center" position="0 0.1 0" scale="0.2 0.2 0.2" color="white"></a-text>
         </a-entity>
       </xrextras-face-attachment>
+
+      <!-- Eye Attachments -->
+      <xrextras-face-attachment point="leftEye">
+        <a-sphere class="eye-ball" radius="0.03" color="#FF3B30" visible="false"></a-sphere>
+      </xrextras-face-attachment>
+      <xrextras-face-attachment point="rightEye">
+        <a-sphere class="eye-ball" radius="0.03" color="#FF3B30" visible="false"></a-sphere>
+      </xrextras-face-attachment>
     </xrextras-faceanchor>
 
     <a-light type="ambient" intensity="1"></a-light>
@@ -101,94 +71,17 @@
 
     const onFaceUpdate = (event) => {
       const mouthBall = document.getElementById('mouth-ball')
-      if (mouthBall) {
-        const { face } = event.detail
-        console.log('Face Data:', face)
-        const openness = face.mouthOpenness || face.mouthOpen || 0
-        mouthBall.setAttribute('visible', openness > 0.1)
-      }
+      const eyeBalls = document.querySelectorAll('.eye-ball')
+      const { face } = event.detail
+      const openness = face.mouthOpenness || 0
+      const isOpen = openness > 0.1
+
+      if (mouthBall) mouthBall.setAttribute('visible', isOpen)
+      eyeBalls.forEach(ball => ball.setAttribute('visible', isOpen))
     }
 
     scene.addEventListener('xrfaceupdated', onFaceUpdate)
     window.addEventListener('xrfaceupdated', onFaceUpdate)
-
-    const statusLog = document.getElementById('status-log')
-    const log = (msg) => {
-      console.log(msg)
-      statusLog.innerText = msg
-    }
-
-    // Camera Selection Logic
-    const cameraSelect = document.getElementById('camera-select')
-    
-    const updateCameraList = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices()
-        const videoDevices = devices.filter(d => d.kind === 'videoinput')
-        
-        cameraSelect.innerHTML = ''
-        videoDevices.forEach(device => {
-          const option = document.createElement('option')
-          option.value = device.deviceId
-          option.text = device.label || `Camera ${cameraSelect.length + 1}`
-          if (device.deviceId === localStorage.getItem('preferredCameraId')) {
-            option.selected = true
-          }
-          cameraSelect.appendChild(option)
-        })
-        log('Cameras listed: ' + videoDevices.length)
-      } catch (err) {
-        log('Error listing cameras: ' + err.message)
-      }
-    }
-
-    cameraSelect.addEventListener('change', () => {
-      localStorage.setItem('preferredCameraId', cameraSelect.value)
-      log('Camera changed. Reloading...')
-      window.location.reload()
-    })
-
-    // Global Error Handler
-    window.addEventListener('error', (e) => {
-      log('Global Error: ' + e.message)
-    })
-
-    // Wait for 8th wall to start (and have permissions) before listing labels
-    window.addEventListener('xrloaded', () => {
-      log('8th Wall Loaded (xrloaded)')
-      if (window.XR && !window.XR8) window.XR8 = window.XR
-      
-      // Intercept XR8.run to inject deviceId if we have one
-      const originalRun = XR8.run
-      XR8.run = function(config) {
-        log('XR8.run called')
-        const preferredId = localStorage.getItem('preferredCameraId')
-        if (preferredId) {
-          config.deviceId = preferredId
-          log('Using deviceId: ' + preferredId.substring(0, 8) + '...')
-        }
-        
-        // Remove cameraDirection for PC/Standalone to avoid "front" constraint
-        if (config.cameraDirection) {
-          log('Removing cameraDirection constraint: ' + config.cameraDirection)
-          delete config.cameraDirection
-        }
-
-        // Force desktop support if needed
-        if (!config.allowedDevices) config.allowedDevices = 'any'
-        
-        log('Final Config: ' + JSON.stringify(config))
-        return originalRun.apply(this, arguments)
-      }
-    })
-
-    scene.addEventListener('xrsessionstarted', () => log('Session Started'))
-    scene.addEventListener('xrsessionended', () => log('Session Ended'))
-    scene.addEventListener('xrerror', (e) => log('XR Error: ' + e.detail.error))
-
-    // Periodically check for labels (permissions might be granted later)
-    setInterval(updateCameraList, 3000)
-    updateCameraList()
   </script>
 </body>
 
