@@ -30,7 +30,8 @@
     xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
-      <!-- No external textures for now to avoid 404 -->
+      <!-- Sample song -->
+      <audio id="song" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a7315b.mp3" loop></audio>
     </a-assets>
 
     <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
@@ -102,12 +103,18 @@
         log('Mouth Opened!')
         const mesh = document.querySelector('xrextras-face-mesh')
         if (mesh) mesh.setAttribute('material', 'color: #34C759; transparent: true; opacity: 0.6')
+        
+        const song = document.getElementById('song')
+        if (song) song.play().catch(e => log('Audio Error: ' + e.message))
       })
 
       scene.addEventListener('xrmouthclosed', () => {
         log('Mouth Closed')
         const mesh = document.querySelector('xrextras-face-mesh')
         if (mesh) mesh.setAttribute('material', 'color: #FF3B30; transparent: true; opacity: 0.3')
+        
+        const song = document.getElementById('song')
+        if (song) song.pause()
       })
     </script>
 </body>
