@@ -116,6 +116,20 @@
         const song = document.getElementById('song')
         if (song) song.pause()
       })
+      // Unlock audio on first interaction
+      const unlockAudio = () => {
+        const song = document.getElementById('song')
+        if (song) {
+          song.play().then(() => {
+            song.pause()
+            log('Audio Unlocked!')
+          }).catch(e => log('Unlock Error: ' + e.message))
+        }
+        window.removeEventListener('click', unlockAudio)
+        window.removeEventListener('touchstart', unlockAudio)
+      }
+      window.addEventListener('click', unlockAudio)
+      window.addEventListener('touchstart', unlockAudio)
     </script>
 </body>
 
