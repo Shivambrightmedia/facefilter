@@ -23,9 +23,40 @@
   <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1.0.0/dist/xrextras.js"></script>
 
   <link rel="stylesheet" href="style.css">
+  <style>
+    #camera-selector-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 8px;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    #camera-select {
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+      padding: 5px;
+      border-radius: 4px;
+      outline: none;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="camera-selector-container">
+    <label for="camera-select">Select Camera:</label>
+    <select id="camera-select">
+      <option>Requesting devices...</option>
+    </select>
+  </div>
+
   <a-scene xrextras-runtime-error renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
     xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
@@ -73,6 +104,53 @@
 
     scene.addEventListener('xrfaceupdated', onFaceUpdate)
     window.addEventListener('xrfaceupdated', onFaceUpdate)
+
+    // Camera Selection Logic
+    const cameraSelect = document.getElementById('camera-select')
+    
+    const updateCameraList = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices()
+        const videoDevices = devices.filter(d => d.kind === 'videoinput')
+        
+        cameraSelect.innerHTML = ''
+        videoDevices.forEach(device => {
+          const option = document.createElement('option')
+          option.value = device.deviceId
+          option.text = device.label || `Camera ${cameraSelect.length + 1}`
+          if (device.deviceId === localStorage.getItem('preferredCameraId')) {
+            option.selected = true
+          }
+          cameraSelect.appendChild(option)
+        })
+      } catch (err) {
+        console.error('Error listing cameras:', err)
+      }
+    }
+
+    cameraSelect.addEventListener('change', () => {
+      localStorage.setItem('preferredCameraId', cameraSelect.value)
+      // Reload is cleanest way to ensure 8th Wall re-initializes with correct device
+      window.location.reload()
+    })
+
+    // Wait for 8th wall to start (and have permissions) before listing labels
+    window.addEventListener('xrloaded', () => {
+      // Intercept XR8.run to inject deviceId if we have one
+      const originalRun = XR8.run
+      XR8.run = (config) => {
+        const preferredId = localStorage.getItem('preferredCameraId')
+        if (preferredId) {
+          config.deviceId = preferredId
+          console.log('Using preferred camera:', preferredId)
+        }
+        return originalRun.call(XR8, config)
+      }
+    })
+
+    // Periodically check for labels (permissions might be granted later)
+    setInterval(updateCameraList, 3000)
+    updateCameraList()
   </script>
 </body>
 
