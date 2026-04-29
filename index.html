@@ -6,9 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>8th Wall Face Filter</title>
 
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-
   <!-- Aggressive XR8 Shim -->
   <script>
     (function() {
@@ -29,6 +26,9 @@
   <!-- 8th Wall Engine -->
   <script src="xr-engine/xr.js" data-preload-chunks="face"></script>
 
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+
   <!-- 8th Wall XRExtras -->
   <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1.0.0/dist/xrextras.js"></script>
 
@@ -40,7 +40,7 @@
     xrextras-loading
     xrextras-runtime-error 
     renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
-    xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
+    xrface="apiKey: local-test; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
       <!-- No external textures for now to avoid 404 -->
