@@ -30,8 +30,8 @@
     xrface="mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
 
     <a-assets timeout="30000">
-      <!-- Sample song -->
-      <audio id="song" src="https://www.w3schools.com/html/horse.mp3" loop></audio>
+      <!-- Local song -->
+      <audio id="song" src="Music/horse.mp3" loop></audio>
     </a-assets>
 
     <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
@@ -67,70 +67,84 @@
     <a-light type="directional" position="0 2 2" intensity="0.5"></a-light>
   </a-scene>
 
-    <!-- Debug UI -->
-    <div id="debug-log" style="position: fixed; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.5); z-index: 1000; pointer-events: none; font-family: monospace; font-size: 12px; padding: 5px;"></div>
+  <!-- Debug UI -->
+  <div id="debug-log"
+    style="position: fixed; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.5); z-index: 1000; pointer-events: none; font-family: monospace; font-size: 12px; padding: 5px;">
+  </div>
 
-    <script>
-      const scene = document.querySelector('a-scene')
-      const debugLog = document.getElementById('debug-log')
+  <script>
+    const scene = document.querySelector('a-scene')
+    const debugLog = document.getElementById('debug-log')
 
-      const log = (msg) => {
-        debugLog.innerText = msg
-        console.log(msg)
-      }
+    const log = (msg) => {
+      debugLog.innerText = msg
+      console.log(msg)
+    }
 
-      const onFaceUpdate = (event) => {
-        const mouthBall = document.getElementById('mouth-ball')
-        const eyeBalls = document.querySelectorAll('.eye-ball')
-        const {face} = event.detail
-        
-        const openness = face.mouthOpenness || face.mouthOpen || 0
-        const isOpen = openness > 0.1
-        
-        log(`Mouth: ${openness.toFixed(2)} | Open: ${isOpen}`)
+    const onFaceUpdate = (event) => {
+      const mouthBall = document.getElementById('mouth-ball')
+      const eyeBalls = document.querySelectorAll('.eye-ball')
+      const { face } = event.detail
 
-        if (mouthBall) mouthBall.setAttribute('visible', isOpen)
-        eyeBalls.forEach(ball => {
-          ball.setAttribute('visible', isOpen)
-          if (isOpen) ball.setAttribute('scale', '1.5 1.5 1.5')
-          else ball.setAttribute('scale', '1 1 1')
+      const openness = face.mouthOpenness || face.mouthOpen || 0
+      const isOpen = openness > 0.1
+
+      log(`Mouth: ${openness.toFixed(2)} | Open: ${isOpen}`)
+
+      if (mouthBall) mouthBall.setAttribute('visible', isOpen)
+      eyeBalls.forEach(ball => {
+        ball.setAttribute('visible', isOpen)
+        if (isOpen) ball.setAttribute('scale', '1.5 1.5 1.5')
+        else ball.setAttribute('scale', '1 1 1')
+      })
+    }
+
+    scene.addEventListener('xrfaceupdated', onFaceUpdate)
+
+    let playPromise = null
+    scene.addEventListener('xrmouthopened', () => {
+      log('Mouth Opened!')
+      const mesh = document.querySelector('xrextras-face-mesh')
+      if (mesh) mesh.setAttribute('material', 'color: #34C759; transparent: true; opacity: 0.6')
+
+      const song = document.getElementById('song')
+      if (song) {
+        playPromise = song.play()
+        playPromise.catch(e => {
+          if (e.name !== 'AbortError') log('Audio Error: ' + e.message)
         })
       }
+    })
 
-      scene.addEventListener('xrfaceupdated', onFaceUpdate)
-      
-      scene.addEventListener('xrmouthopened', () => {
-        log('Mouth Opened!')
-        const mesh = document.querySelector('xrextras-face-mesh')
-        if (mesh) mesh.setAttribute('material', 'color: #34C759; transparent: true; opacity: 0.6')
-        
-        const song = document.getElementById('song')
-        if (song) song.play().catch(e => log('Audio Error: ' + e.message))
-      })
+    scene.addEventListener('xrmouthclosed', () => {
+      log('Mouth Closed')
+      const mesh = document.querySelector('xrextras-face-mesh')
+      if (mesh) mesh.setAttribute('material', 'color: #FF3B30; transparent: true; opacity: 0.3')
 
-      scene.addEventListener('xrmouthclosed', () => {
-        log('Mouth Closed')
-        const mesh = document.querySelector('xrextras-face-mesh')
-        if (mesh) mesh.setAttribute('material', 'color: #FF3B30; transparent: true; opacity: 0.3')
-        
-        const song = document.getElementById('song')
-        if (song) song.pause()
-      })
-      // Unlock audio on first interaction
-      const unlockAudio = () => {
-        const song = document.getElementById('song')
-        if (song) {
-          song.play().then(() => {
-            song.pause()
-            log('Audio Unlocked!')
-          }).catch(e => log('Unlock Error: ' + e.message))
-        }
-        window.removeEventListener('click', unlockAudio)
-        window.removeEventListener('touchstart', unlockAudio)
+      const song = document.getElementById('song')
+      if (song && playPromise) {
+        playPromise.then(() => {
+          song.pause()
+        }).catch(() => { })
+      } else if (song) {
+        song.pause()
       }
-      window.addEventListener('click', unlockAudio)
-      window.addEventListener('touchstart', unlockAudio)
-    </script>
+    })
+    // Unlock audio on first interaction
+    const unlockAudio = () => {
+      const song = document.getElementById('song')
+      if (song) {
+        song.play().then(() => {
+          song.pause()
+          log('Audio Unlocked!')
+        }).catch(e => log('Unlock Error: ' + e.message))
+      }
+      window.removeEventListener('click', unlockAudio)
+      window.removeEventListener('touchstart', unlockAudio)
+    }
+    window.addEventListener('click', unlockAudio)
+    window.addEventListener('touchstart', unlockAudio)
+  </script>
 </body>
 
 </html>
