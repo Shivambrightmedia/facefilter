@@ -145,15 +145,22 @@
       }
     })
 
-    scene.addEventListener('xrfacefound', (e) => log(`Face Found: ${e.detail.id}`))
-    scene.addEventListener('xrfacelost', (e) => log(`Face Lost: ${e.detail.id}`))
+    const activeFaces = new Set()
+    scene.addEventListener('xrfacefound', (e) => {
+      activeFaces.add(e.detail.id)
+      log(`Faces: ${activeFaces.size} | Found: ${e.detail.id}`)
+    })
+    scene.addEventListener('xrfacelost', (e) => {
+      activeFaces.delete(e.detail.id)
+      log(`Faces: ${activeFaces.size} | Lost: ${e.detail.id}`)
+    })
 
     let openCount = 0
     let playPromise = null
 
     scene.addEventListener('xrmouthopened', () => {
       openCount++
-      log(`Mouths Open: ${openCount}`)
+      log(`Users: ${activeFaces.size} | Mouths: ${openCount}`)
       const song = document.getElementById('song')
       if (song && openCount === 1) {
         playPromise = song.play()
@@ -165,7 +172,7 @@
 
     scene.addEventListener('xrmouthclosed', () => {
       openCount = Math.max(0, openCount - 1)
-      log(`Mouths Open: ${openCount}`)
+      log(`Users: ${activeFaces.size} | Mouths: ${openCount}`)
       const song = document.getElementById('song')
       if (song && openCount === 0 && playPromise) {
         playPromise.then(() => song.pause()).catch(() => { })
