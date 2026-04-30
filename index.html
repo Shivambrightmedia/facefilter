@@ -52,13 +52,14 @@
       <audio id="song" src="Music/horse.mp3" loop></audio>
     </a-assets>
 
-    <xrextras-face-background src="#bg"></xrextras-face-background>
-
-    <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
+    <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0">
+      <!-- City Background Plane parented to camera -->
+      <a-plane id="city-bg" src="#bg" position="0 0 -0.2" scale="0.5 0.5 1" material="shader: flat; depthTest: false;"></a-plane>
+    </a-camera>
 
     <!-- Face Anchor 0 -->
     <xrextras-faceanchor face-id="0" face-mouth-handler="faceId: 0">
-      <xrextras-face-mesh></xrextras-face-mesh>
+      <xrextras-face-mesh xrextras-hider-material></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -78,7 +79,7 @@
 
     <!-- Face Anchor 1 -->
     <xrextras-faceanchor face-id="1" face-mouth-handler="faceId: 1">
-      <xrextras-face-mesh></xrextras-face-mesh>
+      <xrextras-face-mesh xrextras-hider-material></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -98,7 +99,7 @@
 
     <!-- Face Anchor 2 -->
     <xrextras-faceanchor face-id="2" face-mouth-handler="faceId: 2">
-      <xrextras-face-mesh></xrextras-face-mesh>
+      <xrextras-face-mesh xrextras-hider-material></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
