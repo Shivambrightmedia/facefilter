@@ -17,7 +17,7 @@
     window.addEventListener('xrloaded', () => {
       if (window.XR && !window.XR8) window.XR8 = window.XR;
       if (window.XR8 && window.XR8.FaceController) {
-        XR8.FaceController.configure({maxDetections: 3})
+        XR8.FaceController.configure({maxDetections: 3, segmentation: true})
       }
       // Unlock audio after XR loads (camera permission = user gesture)
       const tryUnlock = () => {
@@ -37,19 +37,23 @@
   </script>
 
   <!-- 8th Wall XRExtras -->
-  <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1.0.0/dist/xrextras.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras/dist/xrextras.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <a-scene xrextras-runtime-error xrextras-face-tracking renderer="maxCanvasWidth: 960; maxCanvasHeight: 960"
-    xrface="maxDetections: 3; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any;">
+    xrface="maxDetections: 3; mirroredDisplay: true; meshGeometry: face, eyes, mouth; cameraDirection: front; allowedDevices: any; segmentation: true;">
 
     <a-assets timeout="30000">
+      <!-- Background Image -->
+      <img id="bg" src="Images/coco background.jpg">
       <!-- Local song -->
       <audio id="song" src="Music/horse.mp3" loop></audio>
     </a-assets>
+
+    <xrextras-face-background src="#bg"></xrextras-face-background>
 
     <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
 
