@@ -17,7 +17,13 @@
     window.addEventListener('xrloaded', () => {
       if (window.XR && !window.XR8) window.XR8 = window.XR;
       if (window.XR8 && window.XR8.FaceController) {
-        XR8.FaceController.configure({maxDetections: 3, segmentation: true})
+        const config = XR8.FaceController.configure({maxDetections: 3, segmentation: true})
+        log(`XR Config: max=${config.maxDetections} seg=${config.segmentation}`)
+      }
+      if (!AFRAME.components['xrextras-face-background']) {
+        log('WARNING: xrextras-face-background component not found!')
+      } else {
+        log('xrextras-face-background component ready.')
       }
       // Unlock audio after XR loads (camera permission = user gesture)
       const tryUnlock = () => {
@@ -25,7 +31,7 @@
         if (song && song.paused) {
           song.play().then(() => {
             song.pause()
-            console.log('Audio unlocked via XR')
+            log('Audio unlocked via XR')
           }).catch(() => {})
         }
       }
@@ -48,7 +54,7 @@
 
     <a-assets timeout="30000">
       <!-- Background Image -->
-      <img id="bg" src="Images/coco background.jpg">
+      <img id="bg" src="Images/coco_background.jpg">
       <!-- Local song -->
       <audio id="song" src="Music/horse.mp3" loop></audio>
     </a-assets>
@@ -178,6 +184,7 @@
       if (activeFaces.size === 0) {
         openCount = 0
         pauseSong()
+        log('All faces lost. Music stopped.')
       }
     })
 
