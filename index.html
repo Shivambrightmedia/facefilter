@@ -67,15 +67,13 @@
       <audio id="song" src="Music/horse.mp3" loop></audio>
     </a-assets>
 
-    <xrextras-face-background src="#bg"></xrextras-face-background>
-    <xrextras-face-mask src="#bg"></xrextras-face-mask>
-    <xrextras-generate-face-background src="#bg"></xrextras-generate-face-background>
+    <a-sky src="#bg"></a-sky>
 
     <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
 
     <!-- Face Anchor 0 -->
     <xrextras-faceanchor face-id="0" face-mouth-handler="faceId: 0">
-      <xrextras-face-mesh></xrextras-face-mesh>
+      <xrextras-face-mesh material="shader: video; useCameraTexture: true"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -95,7 +93,7 @@
 
     <!-- Face Anchor 1 -->
     <xrextras-faceanchor face-id="1" face-mouth-handler="faceId: 1">
-      <xrextras-face-mesh></xrextras-face-mesh>
+      <xrextras-face-mesh material="shader: video; useCameraTexture: true"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -115,7 +113,7 @@
 
     <!-- Face Anchor 2 -->
     <xrextras-faceanchor face-id="2" face-mouth-handler="faceId: 2">
-      <xrextras-face-mesh></xrextras-face-mesh>
+      <xrextras-face-mesh material="shader: video; useCameraTexture: true"></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
@@ -137,17 +135,12 @@
     <a-light type="directional" position="0 2 2" intensity="0.5"></a-light>
   </a-scene>
 
-  <!-- Debug UI -->
-  <div id="debug-log"
-    style="position: fixed; bottom: 20px; left: 20px; color: black; background: white; z-index: 9999; pointer-events: none; font-family: monospace; font-size: 14px; padding: 10px; border: 2px solid red; max-width: 80%; white-space: pre-wrap;">
-  </div>
 
   <script>
     const scene = document.querySelector('a-scene')
     const debugLog = document.getElementById('debug-log')
 
     const log = (msg) => {
-      debugLog.innerText = msg + "\n" + debugLog.innerText
       console.log(msg)
     }
 
