@@ -22,8 +22,16 @@
       }
       if (!AFRAME.components['xrextras-face-background']) {
         log('WARNING: xrextras-face-background component not found!')
+        const xrextras = Object.keys(AFRAME.components).filter(c => c.startsWith('xrextras'))
+        log(`Available: ${xrextras.join(', ')}`)
       } else {
         log('xrextras-face-background component ready.')
+      }
+      const bgImg = document.getElementById('bg')
+      if (bgImg.complete) log('BG Image Loaded')
+      else {
+        bgImg.onload = () => log('BG Image Load Success')
+        bgImg.onerror = () => log('BG Image Load ERROR')
       }
       // Unlock audio after XR loads (camera permission = user gesture)
       const tryUnlock = () => {
@@ -65,6 +73,7 @@
 
     <!-- Face Anchor 0 -->
     <xrextras-faceanchor face-id="0" face-mouth-handler="faceId: 0">
+      <xrextras-face-mesh></xrextras-face-mesh>
       <xrextras-face-attachment point="noseBridge">
         <a-sphere radius="0.04" color="#FF3B30" position="0 0.02 0"></a-sphere>
       </xrextras-face-attachment>
