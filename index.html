@@ -68,6 +68,8 @@
     </a-assets>
 
     <xrextras-face-background src="#bg"></xrextras-face-background>
+    <xrextras-face-mask src="#bg"></xrextras-face-mask>
+    <xrextras-generate-face-background src="#bg"></xrextras-generate-face-background>
 
     <a-camera id="camera" look-controls="enabled: false" wasd-controls="enabled: false" position="0 1.6 0"></a-camera>
 
@@ -145,7 +147,7 @@
     const debugLog = document.getElementById('debug-log')
 
     const log = (msg) => {
-      debugLog.innerText += "\n" + msg
+      debugLog.innerText = msg + "\n" + debugLog.innerText
       console.log(msg)
     }
 
